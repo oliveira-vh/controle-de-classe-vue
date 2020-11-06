@@ -155,18 +155,18 @@
 import firebase from '../../components/firebaseConfig';
 const db = firebase.firestore();
 
-  export default {
+export default {
 
-    async asyncData({params}){
-        const turma = params.turma
-        return { turma }
-    },
+  async asyncData({params}){
+      const turma = params.turma
+      return { turma }
+  },
 
-    data: () => ({
+  data: () => ({
 
-      dialog: false,
-      dialogDelete: false,
-      headers: [
+    dialog: false,
+    dialogDelete: false,
+    headers: [
           {
             text: 'Alunos',
             align: 'start',
@@ -180,18 +180,18 @@ const db = firebase.firestore();
           { text: 'Média', value:  'media' },
           { text: 'Ações', value: 'actions', sortable: false }
         ],
-      alunos: [],
-      loading: true,
-      editedIndex: -1,
-      tituloDaTurma: '',
-      itemIdToDelete: '',
-      editedItem: {
-        nome: '',
-        nota1: 0,
-        nota2: 0,
-        nota3: 0,
-        nota4: 0
-      },
+    alunos: [],
+    loading: true,
+    editedIndex: -1,
+    tituloDaTurma: '',
+    itemIdToDelete: '',
+    editedItem: {
+      nome: '',
+      nota1: 0,
+      nota2: 0,
+      nota3: 0,
+      nota4: 0
+    },
       defaultItem: {
         nome: '',
         nota1: 0,
@@ -236,7 +236,7 @@ const db = firebase.firestore();
               media: (doc.data().nota1 + doc.data().nota2 + doc.data().nota3 + doc.data().nota4)/4
             });
           });
-          console.log(this.alunos)
+          //console.log(this.alunos)
           this.loading = false;
           this.tituloDaTurma = this.turma.replace('-', ' ');
         })
@@ -247,7 +247,7 @@ const db = firebase.firestore();
       },
       editItem(item) {
         this.editedIndex = item.id
-        console.log(item)
+        //console.log(item)
         this.editedItem = { 
           id: item.id,
           nome: item.name,
@@ -256,11 +256,11 @@ const db = firebase.firestore();
           nota3: item.nota4,
           nota4: item.nota4
          }
-        console.log(this.editedItem)
+        //console.log(this.editedItem)
         this.dialog = true
       },
       getItemToDelete(item) {
-        console.log(item.id)
+        //console.log(item.id)
         this.editedIndex = item.id
         this.dialogDelete = true
       },
@@ -269,11 +269,11 @@ const db = firebase.firestore();
           .doc(`${this.editedIndex}`)
           .delete()
           .then(() => {
-            alert("Aluno excluído com sucesso!");
+            alert("Aluno excluído com sucesso!")
             this.editedIndex = -1
           })
           .catch((error) => {
-            console.error("Erro ao excluir. Favor tentar novamente!");
+            alert("Erro ao excluir. Favor tentar novamente!")
           });
           this.closeDelete()
           window.location.reload()
@@ -293,7 +293,7 @@ const db = firebase.firestore();
         })
       },
       save() {
-        if(this.editedItem.id == undefined){
+        if(this.editedItem.id === undefined){
         db.collection(`${this.turma}`)
           .add({ 
             nome: this.editedItem.nome,
@@ -303,12 +303,12 @@ const db = firebase.firestore();
             nota4: parseInt(this.editedItem.nota4)
            })
            .then(() => {
-                alert("Cadastro feito com sucesso!");
+                alert("Cadastro feito com sucesso!")
                 this.close();
                 window.location.reload()
             })
             .catch((error) => {
-            alert("Erro ao criar novo aluno. Favor tentar novamente.");
+                alert("Erro ao criar novo aluno. Favor tentar novamente.")
           });
         } else {
             db.collection(`${this.turma}`)
@@ -321,12 +321,12 @@ const db = firebase.firestore();
                 nota4: parseInt(this.editedItem.nota4)
               })
               .then(() => {
-                alert("Atualização feita com sucesso!");
+                alert("Atualização feita com sucesso!")
                 this.close();
                 window.location.reload()
               })
               .catch((error) => {
-                alert("Erro ao atualizar. Favor tentar novamente.");
+                alert("Erro ao atualizar. Favor tentar novamente.")
               });
         }
       },
