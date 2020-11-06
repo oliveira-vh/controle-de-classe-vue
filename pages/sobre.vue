@@ -1,19 +1,15 @@
 <template>
-  <v-row>
-    <v-col class="text-center">
-      <img
-        src="/v.png"
-        alt="Vuetify.js"
-        class="mb-5"
-      >
-      <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
-        <footer>
-          <small>
-            <em>&mdash;John Johnson</em>
-          </small>
-        </footer>
-      </blockquote>
-    </v-col>
-  </v-row>
+  <div>
+    <a href="https://github.com/oliveira-vh/controle-de-classe-vue" target="_blank"><h2>Github</h2></a>
+  </div>
 </template>
+
+<style scoped>
+a{
+  color: white;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+</style>
