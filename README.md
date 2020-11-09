@@ -4,7 +4,7 @@ App de Controle de Classe feito com Nuxt (Vue.JS), Vuetify e Firebase (banco nã
 
 Demo: Em breve!
 
-Futuras implementações: mais validações, login com firebase, cada usuário com sua coleção única no db, testes, geração de .csv.
+Futuras implementações: mais validações, login com firebase, cada usuário com sua coleção única no db, testes ~~, geração de .csv.~~
 
 Instruções para rodar localmente:
 
