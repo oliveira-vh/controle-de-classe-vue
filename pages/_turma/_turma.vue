@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-data-table
     :headers="headers"
     :items="alunos"
@@ -147,15 +148,33 @@
       </v-icon>
     </template>
   </v-data-table>
+
+ <vue-json-to-csv
+    :json-data="alunos"
+    :labels="{ name: { title: 'Nome' }, nota1: { title: 'Nota 1' }, nota2: { title: 'Nota 2' }, nota3: { title: 'Nota 3' }, nota4: { title: 'Nota 4' }, media: { title: 'Média' }}"
+    :csv-title="`${turma}`"
+    class="d-flex justify-end mt-3"
+    >
+    <v-btn
+      color="primary"
+    >
+      Gerar Planilha
+    </v-btn>
+</vue-json-to-csv>
+
+</div>
 </template>
 
 <script>
 /* eslint-disable */
-
+import VueJsonToCsv from 'vue-json-to-csv'
 import firebase from '../../components/firebaseConfig';
 const db = firebase.firestore();
 
 export default {
+  components: {
+      VueJsonToCsv
+    },
 
   async asyncData({params}){
       const turma = params.turma
@@ -163,7 +182,6 @@ export default {
   },
 
   data: () => ({
-
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -236,7 +254,7 @@ export default {
               media: (doc.data().nota1 + doc.data().nota2 + doc.data().nota3 + doc.data().nota4)/4
             });
           });
-          //console.log(this.alunos)
+          console.log(this.alunos)
           this.loading = false;
           this.tituloDaTurma = this.turma.replace('-', ' ');
         })
