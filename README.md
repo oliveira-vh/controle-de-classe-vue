@@ -2,7 +2,7 @@
 
 App de Controle de Classe feito com Nuxt (Vue.JS), Vuetify e Firebase Firestore (banco não relacional). Nesta app o(a) professor(a) pode consultar as tabelas com os nomes, notas e médias dos alunos por série (do quinto ano ao primeiro ano do Ensino Médio). Os dados dos alunos são todos lidos e persistidos num banco de dados Firestore na nuvem. As operações (CRUD) possíveis são: leitura dos dados da nuvem, adição de novos alunos e notas, edição de nomes e notas e exclusão de alunos. A qualquer momento pode ser gerada e baixada uma planilha em formato .csv dos dados no app.
 
-Demo: Em breve!
+[Demo](https://sleepy-neumann-e99e77.netlify.app/)
 
 Instruções para rodar localmente:
 
