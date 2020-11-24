@@ -2,7 +2,7 @@
 ### Node template
 
 ##firebaseconfig
-./components/firebaseConfig.js
+components/firebaseConfig.js
 
 # Logs
 /logs
