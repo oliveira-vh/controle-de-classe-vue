@@ -112,7 +112,7 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="save"
+                @click="setAlunos"
               >
                 Salvar
               </v-btn>
@@ -170,186 +170,184 @@
 import VueJsonToCsv from 'vue-json-to-csv'
 import firebase from '../../components/firebaseConfig';
 const db = firebase.firestore();
-
 export default {
-  components: {
-      VueJsonToCsv
-    },
-
-  async asyncData({params}){
-      const turma = params.turma
-      return { turma }
+components: {
+    VueJsonToCsv
   },
-
-  data: () => ({
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-          {
-            text: 'Alunos',
-            align: 'start',
-            sortable: true,
-            value: 'name',
-          },
-          { text: 'Nota 1', value: 'nota1' },
-          { text: 'Nota 2', value: 'nota2' },
-          { text: 'Nota 3', value: 'nota3' },
-          { text: 'Nota 4', value: 'nota4' },
-          { text: 'Média', value:  'media' },
-          { text: 'Ações', value: 'actions', sortable: false }
-        ],
-    alunos: [],
-    loading: true,
-    editedIndex: -1,
-    tituloDaTurma: '',
-    itemIdToDelete: '',
-    editedItem: {
-      nome: '',
-      nota1: 0,
-      nota2: 0,
-      nota3: 0,
-      nota4: 0
-    },
-      defaultItem: {
-        nome: '',
-        nota1: 0,
-        nota2: 0,
-        nota3: 0,
-        nota4: 0
+async asyncData({params}){
+    const turma = params.turma
+    return { turma }
+},
+data: () => ({
+dialog: false,
+dialogDelete: false,
+headers: [
+      {
+        text: 'Alunos',
+        align: 'start',
+        sortable: true,
+        value: 'name',
       },
-      rules :{
-          required: value => !!value || 'Nome obrigatório.',
-          interval: value => (value <= 10 && value >=0) || 'Nota de 0 a 10' ,
-        },
-    }),
-    computed: {
-      formTitle() {
-        return this.editedIndex === -1 ? 'Novo Aluno' : 'Editar Aluno'
-      },
+      { text: 'Nota 1', value: 'nota1' },
+      { text: 'Nota 2', value: 'nota2' },
+      { text: 'Nota 3', value: 'nota3' },
+      { text: 'Nota 4', value: 'nota4' },
+      { text: 'Média', value:  'media' },
+      { text: 'Ações', value: 'actions', sortable: false }
+    ],
+alunos: [],
+loading: true,
+editedIndex: -1,
+tituloDaTurma: '',
+itemIdToDelete: '',
+editedItem: {
+  nome: '',
+  nota1: 0,
+  nota2: 0,
+  nota3: 0,
+  nota4: 0
+},
+  defaultItem: {
+    nome: '',
+    nota1: 0,
+    nota2: 0,
+    nota3: 0,
+    nota4: 0
+  },
+  rules :{
+      required: value => !!value || 'Nome obrigatório.',
+      interval: value => (value <= 10 && value >=0) || 'Nota de 0 a 10' ,
     },
-    watch: {
-      dialog(val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
-    },
-    created () {
-      this.initialize()
-    },
-    methods: {
-      initialize() {
-        db.collection(`${this.turma}`)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            this.alunos.push({
-              id: doc.id,
-              name: doc.data().nome,
-              nota1: doc.data().nota1,
-              nota2: doc.data().nota2,
-              nota3: doc.data().nota3,
-              nota4: doc.data().nota4,
-              media: (doc.data().nota1 + doc.data().nota2 + doc.data().nota3 + doc.data().nota4)/4
-            });
-          });
-          console.log(this.alunos)
-          this.loading = false;
-          this.tituloDaTurma = this.turma.replace('-', ' ');
+}),
+computed: {
+  formTitle() {
+    return this.editedIndex === -1 ? 'Novo Aluno' : 'Editar Aluno'
+  },
+},
+watch: {
+  dialog(val) {
+    val || this.close()
+  },
+  dialogDelete (val) {
+    val || this.closeDelete()
+  },
+},
+created () {
+  this.getAlunos()
+},
+methods: {
+getAlunos() {
+  db.collection(`${this.turma}`)
+  .get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      this.alunos.push({
+        id: doc.id,
+        name: doc.data().nome,
+        nota1: doc.data().nota1,
+        nota2: doc.data().nota2,
+        nota3: doc.data().nota3,
+        nota4: doc.data().nota4,
+        media: (doc.data().nota1 + doc.data().nota2 + doc.data().nota3 + doc.data().nota4)/4
+      });
+    });
+    console.log(this.alunos)
+    this.loading = false;
+    this.tituloDaTurma = this.turma.replace('-', ' ');
+  })
+  .catch((error) => {
+    console.log("Error getting documents: ", error);
+  });
+},
+editItem(item) {
+  this.editedIndex = item.id
+  //console.log(item)
+  this.editedItem = { 
+    id: item.id,
+    nome: item.name,
+    nota1: item.nota1,
+    nota2: item.nota2,
+    nota3: item.nota4,
+    nota4: item.nota4
+    }
+  //console.log(this.editedItem)
+  this.dialog = true
+},
+getItemToDelete(item) {
+  //console.log(item.id)
+  this.editedIndex = item.id
+  this.dialogDelete = true
+},
+deleteItemConfirm() {
+  db.collection(`${this.turma}`)
+    .doc(`${this.editedIndex}`)
+    .delete()
+    .then(() => {
+      this.editedIndex = -1
+    })
+    .catch((error) => {
+      alert("Erro ao excluir. Favor tentar novamente!")
+    });
+    this.closeDelete()
+    this.alunos = [];
+    this.getAlunos();
+},
+close() {
+  this.dialog = false
+  this.$nextTick(() => {
+    this.editedItem = Object.assign({}, this.defaultItem)
+    this.editedIndex = -1
+  })
+},
+closeDelete() {
+  this.dialogDelete = false
+  this.$nextTick(() => {
+    this.editedItem = Object.assign({}, this.defaultItem)
+    this.editedIndex = -1
+  })
+},
+setAlunos() {
+  if(this.editedItem.id === undefined){
+  db.collection(`${this.turma}`)
+    .add({ 
+      nome: this.editedItem.nome,
+      nota1: parseInt(this.editedItem.nota1),
+      nota2: parseInt(this.editedItem.nota2),
+      nota3: parseInt(this.editedItem.nota3),
+      nota4: parseInt(this.editedItem.nota4)
+      })
+      .then(() => {
+          alert("Cadastro feito com sucesso!")
+          this.close();
+          this.alunos = [];
+          this.getAlunos();
+      })
+      .catch((error) => {
+          alert("Erro ao criar novo aluno. Favor tentar novamente.")
+    });
+  } else {
+      db.collection(`${this.turma}`)
+        .doc(this.editedItem.id)
+        .update({
+          nome: this.editedItem.nome,
+          nota1: parseInt(this.editedItem.nota1),
+          nota2: parseInt(this.editedItem.nota2),
+          nota3: parseInt(this.editedItem.nota3),
+          nota4: parseInt(this.editedItem.nota4)
+        })
+        .then(() => {
+          alert("Atualização feita com sucesso!")
+          this.close();
+          this.alunos = [];
+          this.getAlunos();
         })
         .catch((error) => {
-          console.log("Error getting documents: ", error);
+          alert("Erro ao atualizar. Favor tentar novamente.")
         });
-        
-      },
-      editItem(item) {
-        this.editedIndex = item.id
-        //console.log(item)
-        this.editedItem = { 
-          id: item.id,
-          nome: item.name,
-          nota1: item.nota1,
-          nota2: item.nota2,
-          nota3: item.nota4,
-          nota4: item.nota4
-         }
-        //console.log(this.editedItem)
-        this.dialog = true
-      },
-      getItemToDelete(item) {
-        //console.log(item.id)
-        this.editedIndex = item.id
-        this.dialogDelete = true
-      },
-      deleteItemConfirm() {
-        db.collection(`${this.turma}`)
-          .doc(`${this.editedIndex}`)
-          .delete()
-          .then(() => {
-            alert("Aluno excluído com sucesso!")
-            this.editedIndex = -1
-          })
-          .catch((error) => {
-            alert("Erro ao excluir. Favor tentar novamente!")
-          });
-          this.closeDelete()
-          window.location.reload()
-      },
-      close() {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-      closeDelete() {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-      save() {
-        if(this.editedItem.id === undefined){
-        db.collection(`${this.turma}`)
-          .add({ 
-            nome: this.editedItem.nome,
-            nota1: parseInt(this.editedItem.nota1),
-            nota2: parseInt(this.editedItem.nota2),
-            nota3: parseInt(this.editedItem.nota3),
-            nota4: parseInt(this.editedItem.nota4)
-           })
-           .then(() => {
-                alert("Cadastro feito com sucesso!")
-                this.close();
-                window.location.reload()
-            })
-            .catch((error) => {
-                alert("Erro ao criar novo aluno. Favor tentar novamente.")
-          });
-        } else {
-            db.collection(`${this.turma}`)
-              .doc(this.editedItem.id)
-              .update({
-                nome: this.editedItem.nome,
-                nota1: parseInt(this.editedItem.nota1),
-                nota2: parseInt(this.editedItem.nota2),
-                nota3: parseInt(this.editedItem.nota3),
-                nota4: parseInt(this.editedItem.nota4)
-              })
-              .then(() => {
-                alert("Atualização feita com sucesso!")
-                this.close();
-                window.location.reload()
-              })
-              .catch((error) => {
-                alert("Erro ao atualizar. Favor tentar novamente.")
-              });
-        }
-      },
-    },
   }
+},
+},
+}
 </script>
 
 <style scoped>

@@ -4,8 +4,6 @@ App de Controle de Classe feito com Nuxt (Vue.JS), Vuetify e Firebase (banco nã
 
 Demo: Em breve!
 
-Futuras implementações: mais validações, login com firebase, cada usuário com sua coleção única no db, testes e etc.
-
 Instruções para rodar localmente:
 
 Para rodar esta aplicação é necessário criar um app no console do Firebase, criar um banco Firestore e adicionar o objeto firebaseConfig no módulo components/firebaseConfig.js e inicialize-o com firebase.initializeApp(firebaseConfig). Cada turma deve possuir a sua própria coleção no banco e devem ser nomeadas no formato 'quinto-ano', 'sexto-ano' e etc.

@@ -1,6 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 
+##firebaseconfig
+/components/firebaseConfig.js
+
 # Logs
 /logs
 *.log

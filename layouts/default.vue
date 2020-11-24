@@ -102,7 +102,7 @@ export default {
           to: '/turma/primeiro-ano-em'
         },
         {
-          icon: 'mdi-about',
+          icon: 'mdi-information-outline',
           title: 'Sobre',
           to: '/sobre'
         }
